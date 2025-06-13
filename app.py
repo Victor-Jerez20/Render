@@ -3,7 +3,7 @@ import requests
 
 app = Flask(__name__)
 
-GOOGLE_SCRIPT_URL = "https://script.google.com/macros/library/d/1tEExU9z6cHr_dumFU4NhK9lh6tPQyt5IfZmBQIBlyEleDSemlTGd5jlp/1"
+GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwKjD78MUIWiNbHuE95a4q1tFRRpE-v25RX-WnUQlK3xMVgY-BCky-SORIPaUeVyr7/exec"
 
 @app.route("/datos", methods=["GET"])
 def obtener_datos():
@@ -11,12 +11,12 @@ def obtener_datos():
     
     if not sheet:
         return jsonify({"error": "Falta el parámetro 'sheet'"}), 400
-    
+
     try:
-        # Enviar el parámetro 'sheet' al Apps Script
         respuesta = requests.get(GOOGLE_SCRIPT_URL, params={"sheet": sheet})
         if respuesta.status_code == 200:
-            return jsonify({"valor": respuesta.text})
+            # Intenta decodificar directamente como JSON
+            return jsonify(respuesta.json())
         else:
             return jsonify({"error": "Error desde Google Script"}), 500
     except Exception as e:
